@@ -4,6 +4,7 @@ from TextSummarizer.constants import *
 from TextSummarizer.utils.common import read_yaml, create_directories
 from TextSummarizer.entity import DataIngestionConfig, DataValidationConfig
 from TextSummarizer.entity import DataTransformationConfig
+from TextSummarizer.entity import ModelTrainerConfig
 
 class ConfigurationManager:
     def __init__(
@@ -16,6 +17,7 @@ class ConfigurationManager:
 
         create_directories([self.config.artifacts_root])
 #============================================DATA INGESTION=============================================================
+   
     def get_data_ingestion_config(self) -> DataIngestionConfig:
         config = self.config.data_ingestion
 
@@ -60,6 +62,32 @@ class ConfigurationManager:
 
         return data_transformation_config
     
+
+#======================================MODEL TRAINER=============================================================
+
+    def get_model_trainer_config (self) -> ModelTrainerConfig:
+        config = self.config.model_trainer
+        params = self.params.TrainingArguments
+
+        create_directories([config.root_dir])
+
+
+        model_trainer_config = ModelTrainerConfig(
+            root_dir=config.root_dir,
+            data_path=config.data_path,
+            model_ckpt = config.model_ckpt,
+            num_train_epochs = params.num_train_epochs,
+            warmup_steps = params.warmup_steps,
+            per_device_train_batch_size = params.per_device_train_batch_size,
+            weight_decay = params.weight_decay,
+            logging_steps = params.logging_steps,
+            evaluation_strategy = params.evaluation_strategy,
+            eval_steps = params.evaluation_strategy,
+            save_steps = params.save_steps,
+            gradient_accumulation_steps = params.gradient_accumulation_steps
+        )
+
+        return model_trainer_config
 
     #=========================================================================================================
     #from TextSummarizer.constants import *
